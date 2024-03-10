@@ -19,7 +19,9 @@ Task<Todo?> todoTask5 = freePlaceholderApiService.RetrieveTodoById(6);
 // Store all tasks in a collection.
 List<Task<Todo?>> todoTasks = [todoTask1, todoTask2, todoTask3, todoTask4, todoTask5];
 
-// Await all tasks to complete before continuing.
+// Await all tasks to complete before continuing (regardless of the order they complete).
+// The tasks might complete completely out of order. todoTask3 might finish first, then 4, then 1, etc. 
+// This is totally fine and it's why we are waiting for all of them to complete.
 await Task.WhenAll(todoTasks);
 
 // Write each todo to the console.
