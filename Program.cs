@@ -26,6 +26,7 @@ await Task.WhenAll(todoTasks);
 
 // Write each todo to the console.
 todoTasks.ForEach(task => {
+    // Get the result of the task with task.Result. This will get our Todo from the completed Task.
     Todo? todo = task.Result;
     Console.WriteLine($"TODO ID: {todo?.Id} | TITLE: {todo?.Title} | COMPLETED: {todo?.IsComplete} | USER ID: {todo?.UserId}");
 });
