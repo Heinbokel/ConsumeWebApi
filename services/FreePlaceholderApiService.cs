@@ -24,15 +24,66 @@ namespace ConsumeWebApi.services
             Console.WriteLine($"CALLING FOR TODO WITH ID {todoId}");
             HttpResponseMessage response = await _httpClient.GetAsync($"{BASE_URL}/todos/{todoId}");
 
+            // If the HTTP Response was successful...
             if (response.IsSuccessStatusCode)
             {
+                // Read the 
                 string responseBody = await response.Content.ReadAsStringAsync();
+
                 Console.WriteLine($"DONE CALLING FOR TODO WITH ID {todoId}");
+
+                // Use the JsonSerializer class to turn the JSON response from the API into our Todo class.
                 return JsonSerializer.Deserialize<Todo>(responseBody);
             }
             else
             {
-                throw new ExternalServiceException($"Error occured calling for TODO's. {response.StatusCode}: {response.ReasonPhrase}");
+                // If the HTTP Response was not successful, we throw our custom ExternalServiceException detailing the error.
+                throw new ExternalServiceException($"Error occured calling for todo with id {todoId}. {response.StatusCode}: {response.ReasonPhrase}");
+            }
+        }
+
+        public async Task<List<Todo>> RetrieveTodos()
+        {
+            Console.WriteLine($"CALLING FOR TODOS");
+            HttpResponseMessage response = await _httpClient.GetAsync($"{BASE_URL}/todos");
+
+            // If the HTTP Response was successful...
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the 
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"DONE CALLING FOR TODOS");
+
+                // Use the JsonSerializer class to turn the JSON response from the API into our Todo class.
+                return JsonSerializer.Deserialize<List<Todo>>(responseBody);
+            }
+            else
+            {
+                // If the HTTP Response was not successful, we throw our custom ExternalServiceException detailing the error.
+                throw new ExternalServiceException($"Error occured calling for todos. {response.StatusCode}: {response.ReasonPhrase}");
+            }
+        }
+
+        public async Task DeleteTodoById(int todoId)
+        {
+            Console.WriteLine($"CALLING TO DELETE TODO WITH ID {todoId}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"{BASE_URL}/todos/{todoId}");
+
+            // If the HTTP Response was successful...
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the 
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"DONE CALLING TO DELETE TODO WITH ID {todoId}");
+
+                return;
+            }
+            else
+            {
+                // If the HTTP Response was not successful, we throw our custom ExternalServiceException detailing the error.
+                throw new ExternalServiceException($"Error occured attempting to delete todo with ID {todoId}. {response.StatusCode}: {response.ReasonPhrase}");
             }
         }
 

@@ -31,3 +31,8 @@ todoTasks.ForEach(task => {
     Console.WriteLine($"TODO ID: {todo?.Id} | TITLE: {todo?.Title} | COMPLETED: {todo?.IsComplete} | USER ID: {todo?.UserId}");
 });
 
+List<Todo> todos = await freePlaceholderApiService.RetrieveTodos();
+todos.ForEach(todo => Console.WriteLine($"TODO ID: {todo?.Id} | TITLE: {todo?.Title} | COMPLETED: {todo?.IsComplete} | USER ID: {todo?.UserId}"));
+
+await freePlaceholderApiService.DeleteTodoById(1);
+Console.WriteLine("Done deleting TODO!");
