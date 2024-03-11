@@ -1,4 +1,5 @@
-﻿using ConsumeWebApi.models.responses;
+﻿using ConsumeWebApi.models.requests;
+using ConsumeWebApi.models.responses;
 using ConsumeWebApi.services;
 
 // Instantiate our service that calls the external API.
@@ -36,3 +37,13 @@ todos.ForEach(todo => Console.WriteLine($"TODO ID: {todo?.Id} | TITLE: {todo?.Ti
 
 await freePlaceholderApiService.DeleteTodoById(1);
 Console.WriteLine("Done deleting TODO!");
+
+// Create our TodoCreateRequest
+TodoCreateRequest request = new TodoCreateRequest{UserId = 1, Completed = true, Title = "Do CIS 106 Homework."};
+Todo createdTodo = await freePlaceholderApiService.CreateTodo(request);
+
+// Write out the todo that the server sent back to us. (They send back a generic one, but usually it'd match what we sent in).
+Console.WriteLine($"TODO ID: {createdTodo?.Id} | TITLE: {createdTodo?.Title} | COMPLETED: {createdTodo?.IsComplete} | USER ID: {createdTodo?.UserId}");
+
+await freePlaceholderApiService.UpdateTodo(request, 1);
+Console.WriteLine("DONE UPDATING TODO!");

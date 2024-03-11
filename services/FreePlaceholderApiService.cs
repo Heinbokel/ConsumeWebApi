@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using ConsumeWebApi.exceptions;
+using ConsumeWebApi.models.requests;
 using ConsumeWebApi.models.responses;
 
 namespace ConsumeWebApi.services
@@ -27,7 +29,7 @@ namespace ConsumeWebApi.services
             // If the HTTP Response was successful...
             if (response.IsSuccessStatusCode)
             {
-                // Read the 
+                // Read the response and output it to a string.
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"DONE CALLING FOR TODO WITH ID {todoId}");
@@ -50,7 +52,7 @@ namespace ConsumeWebApi.services
             // If the HTTP Response was successful...
             if (response.IsSuccessStatusCode)
             {
-                // Read the 
+                // Read the response and output it to a string.
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"DONE CALLING FOR TODOS");
@@ -65,6 +67,54 @@ namespace ConsumeWebApi.services
             }
         }
 
+        public async Task<Todo> CreateTodo(TodoCreateRequest request) {
+            Console.WriteLine($"CALLING TO CREATE TODO");
+
+            // Serialize our TodoCreateRequest to JSON so it can be included as the HTTP Request Body.
+            string jsonRequestBody = JsonSerializer.Serialize(request);
+
+            // Create our HttpContent (the HTTP Request Body), including our TodoCreateRequest and some standard encoding
+            // as well as define that we want to use application/json.
+            HttpContent httpContent = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
+
+            // Finally, make the HTTP request to create a new TODO.
+            HttpResponseMessage response = await _httpClient.PostAsync($"{BASE_URL}/todos", httpContent);
+
+            if (response.IsSuccessStatusCode) {
+                // Read the response and output it to a string.
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                return JsonSerializer.Deserialize<Todo>(responseBody);
+            } else {
+                // If the HTTP Response was not successful, we throw our custom ExternalServiceException detailing the error.
+                throw new ExternalServiceException($"Error occured attempting to create todo. {response.StatusCode}: {response.ReasonPhrase}");
+            }
+
+        }
+
+        public async Task UpdateTodo(TodoCreateRequest request, int todoId) {
+            Console.WriteLine($"CALLING TO UPDATE TODO");
+
+            // Serialize our TodoCreateRequest to JSON so it can be included as the HTTP Request Body.
+            string jsonRequestBody = JsonSerializer.Serialize(request);
+
+            // Create our HttpContent (the HTTP Request Body), including our TodoCreateRequest and some standard encoding
+            // as well as define that we want to use application/json.
+            HttpContent httpContent = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
+
+            // Finally, make the HTTP request to create a new TODO.
+            HttpResponseMessage response = await _httpClient.PutAsync($"{BASE_URL}/todos/{todoId}", httpContent);
+
+            if (response.IsSuccessStatusCode) {
+                Console.WriteLine($"DONE CALLING TO UPDATE TODO");
+                return;
+            } else {
+                // If the HTTP Response was not successful, we throw our custom ExternalServiceException detailing the error.
+                throw new ExternalServiceException($"Error occured attempting to update todo with id {todoId}. {response.StatusCode}: {response.ReasonPhrase}");
+            }
+
+        }
+
         public async Task DeleteTodoById(int todoId)
         {
             Console.WriteLine($"CALLING TO DELETE TODO WITH ID {todoId}");
@@ -73,11 +123,7 @@ namespace ConsumeWebApi.services
             // If the HTTP Response was successful...
             if (response.IsSuccessStatusCode)
             {
-                // Read the 
-                string responseBody = await response.Content.ReadAsStringAsync();
-
                 Console.WriteLine($"DONE CALLING TO DELETE TODO WITH ID {todoId}");
-
                 return;
             }
             else
